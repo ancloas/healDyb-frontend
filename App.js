@@ -1,20 +1,26 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { RealmProvider } from '@realm/react';
+
+import { NavigationContainer } from '@react-navigation/native';
+import RootNavigator from './navigation/RootNavigator';
+import HomeScreen from './screens/HomeScreen';
+import CheckinScreen from './screens/CheckinScreen';
+import FeedbackScreen from './screens/FeedbackScreen';
+import LogScreen from './screens/log/LogHomeScreen';
+import AppProvider from './context/AppProvider';
+import { UserProfile, PersonalInfo, Medication } from './src/database/schemas';
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+   <RealmProvider schema={[UserProfile, PersonalInfo, Medication]}>
+    <AppProvider>
+      <NavigationContainer>
+        <StatusBar hidden={true} />
+        <RootNavigator />
+      </NavigationContainer>
+    </AppProvider>
+    </RealmProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

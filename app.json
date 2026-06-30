@@ -1,29 +1,19 @@
 {
   "expo": {
-    "name": "healDyb-frontend",
-    "slug": "healDyb-frontend",
+    "name": "Diabetes Companion",
+    "slug": "diabetes-companion",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
+      "backgroundColor": "#F7F7F5"
     },
     "android": {
+      "package": "com.anc.diabetescompanion",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
+        "backgroundColor": "#F7F7F5"
+      }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "platforms": ["android", "ios"]
   }
 }

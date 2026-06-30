@@ -1,7 +1,7 @@
 // components/CheckpointRow.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors } from '../theme';
+import { colors } from '../../theme';
 import StatusBadge from './StatusBadge';
 
 const DOT_COLOR = {

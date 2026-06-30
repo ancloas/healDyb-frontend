@@ -1,7 +1,7 @@
 // components/StatusBadge.js
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, radius } from '../theme';
+import { colors, radius } from '../../theme';
 
 const STATUS_CONFIG = {
   done: { bg: colors.accentTint, color: colors.accent, label: 'Done' },
