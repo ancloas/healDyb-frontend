@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Diabetes Companion",
-    "slug": "diabetes-companion",
+    "name": "HealDyb",
+    "slug": "healDyb",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -9,11 +9,17 @@
       "backgroundColor": "#F7F7F5"
     },
     "android": {
-      "package": "com.anc.diabetescompanion",
+      "package": "com.anc.healDyb",
       "adaptiveIcon": {
         "backgroundColor": "#F7F7F5"
       }
     },
-    "platforms": ["android", "ios"]
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }

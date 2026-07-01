@@ -5,39 +5,32 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import { useRealm } from '@realm/react';
-import Realm from 'realm';
 
 import ScreenContainer from '../../components/common/ScreenContainer';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import Colors from '../../constants/colors';
 import AppContext from '../../context/AppContext';
+import { saveUserProfile } from '../../database/repositories/UserRepository';
 
 export default function OnboardingCompleteScreen({ navigation }) {
   const { onboardingData, completeOnboarding } = useContext(AppContext);
-  const realm = useRealm();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleFinish = async () => {
     setIsSaving(true);
     try {
-      // Write the clean, nested NoSQL document directly into your local Realm db
-      realm.write(() => {
-        realm.create('UserProfile', {
-          _id: new Realm.BSON.ObjectId(),
-          personal_info: onboardingData.personal_info,
-          diabetes_type: onboardingData.diabetes_profile.diabetes_type,
-          diagnosis_date: onboardingData.diabetes_profile.diagnosis_date,
-          food_preferences: onboardingData.food_preference || [],
-          medications: onboardingData.medications || [],
-          reminders: onboardingData.reminders || {},
-        });
+      await saveUserProfile({
+        personal_info: onboardingData?.personal_info || {},
+        diabetes_type: onboardingData?.diabetes_profile?.diabetes_type || '',
+        diagnosis_date: onboardingData?.diabetes_profile?.diagnosis_date || '',
+        food_preferences: onboardingData?.food_preference || [],
+        medications: onboardingData?.medications || [],
+        reminders: onboardingData?.reminders || {},
       });
 
-      // Clear the onboarding route constraint and switch to Home navigation
       completeOnboarding();
     } catch (error) {
-      console.error('Failed to save onboarding data to Realm:', error);
+      console.error('Failed to save onboarding data to SQLite:', error);
     } finally {
       setIsSaving(false);
     }

@@ -1,80 +1,85 @@
-import React, {
-  useState,
-  useEffect,
-} from 'react';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 
 import AppContext from './AppContext';
+import { initializeUserRepository } from '../database/repositories/UserRepository';
 
 const initialOnboardingData = {
-  personal_info: {
-    name: '',
-    age: '',
-    gender: '',
-    height: '',
-    weight: ''
-  },
+  personal_info: {},
   diabetes_profile: {
-    diabetes_type: '', // e.g., 'Type 1', 'Type 2'
+    diabetes_type: '',
     diagnosis_date: '',
   },
-  food_preference: [], // Starts as a clean, empty list of strings
-  medications: []      // 💡 Clean empty list for dynamic medicine items
+  food_preference: [],
+  medications: [],
+  reminders: {},
 };
 
 export default function AppProvider({ children }) {
-
   const [loading, setLoading] = useState(true);
-
-  const [onboardingCompleted, setOnboardingCompleted] =
-    useState(false);
-
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [onboardingData, setOnboardingData] = useState(initialOnboardingData);
 
-  const updateOnboardingData = (newData) => {
-    setOnboardingData(prev => ({ ...prev, ...newData }));
-  };
-
   useEffect(() => {
+    let isMounted = true;
 
-    async function initializeApp() {
-
-      const value = await AsyncStorage.getItem(
-        'onboardingCompleted'
-      );
-
-      setOnboardingCompleted(value === 'true');
-
-      setLoading(false);
+    async function bootstrap() {
+      try {
+        await initializeUserRepository();
+      } catch (error) {
+        console.error('Failed to initialize SQLite database:', error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
     }
 
-    initializeApp();
+    bootstrap();
 
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  async function completeOnboarding() {
+  const updateOnboardingData = (updates) => {
+    setOnboardingData((previous) => ({
+      ...previous,
+      ...updates,
+    }));
+  };
 
-    await AsyncStorage.setItem(
-      'onboardingCompleted',
-      'true'
-    );
-
+  const completeOnboarding = () => {
     setOnboardingCompleted(true);
-  }
+  };
 
-  return (
-    <AppContext.Provider
-      value={{
-        loading,
-        onboardingCompleted,
-        completeOnboarding,
-        onboardingData,
-        updateOnboardingData
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+  const value = useMemo(
+    () => ({
+      loading,
+      onboardingCompleted,
+      onboardingData,
+      updateOnboardingData,
+      completeOnboarding,
+    }),
+    [loading, onboardingCompleted, onboardingData]
   );
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2563eb" />
+      </View>
+    );
+  }
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+});

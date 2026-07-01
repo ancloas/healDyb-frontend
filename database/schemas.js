@@ -1,46 +1,26 @@
-// src/database/schemas.js
-import Realm from 'realm';
+export const USER_PROFILE_TABLE_SQL = `
+  CREATE TABLE IF NOT EXISTS user_profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    personal_info TEXT NOT NULL,
+    diabetes_type TEXT,
+    diagnosis_date TEXT,
+    food_preferences TEXT,
+    medications TEXT,
+    reminders TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+`;
 
-// 1. Medication Schema
-export class Medication extends Realm.Object {
-  static schema = {
-    name: 'Medication',
-    properties: {
-      name: 'string',
-      dosage: 'string',
-      timing: 'string',
-      frequency: 'string',
-    },
-  };
-}
-
-// 2. Personal Info Sub-Document Schema
-export class PersonalInfo extends Realm.Object {
-  static schema = {
-    name: 'PersonalInfo',
-    embedded: true, // "embedded" means it lives directly inside the UserProfile
-    properties: {
-      name: 'string',
-      age: 'string',
-      gender: 'string',
-      height: 'string',
-      weight: 'string',
-    },
-  };
-}
-
-// 3. Main User Profile Schema
-export class UserProfile extends Realm.Object {
-  static schema = {
-    name: 'UserProfile',
-    primaryKey: '_id',
-    properties: {
-      _id: 'objectId',
-      personal_info: 'PersonalInfo',
-      diabetes_type: 'string',
-      diagnosis_date: 'string',
-      food_preferences: 'string[]', // Array of strings
-      medications: 'Medication[]',  // Relationship array pointing to Medication objects
-    },
-  };
-}
+export const USER_PROFILE_SCHEMA = {
+  tableName: 'user_profiles',
+  columns: [
+    'id',
+    'personal_info',
+    'diabetes_type',
+    'diagnosis_date',
+    'food_preferences',
+    'medications',
+    'reminders',
+    'created_at',
+  ],
+};
