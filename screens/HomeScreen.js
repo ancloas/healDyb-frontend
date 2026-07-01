@@ -11,9 +11,17 @@ import QuickStatCard from '../components/home/QuickStatCard';
 
 import AppContext from '../context/AppContext';
 import { loadUserProfile } from '../database/repositories/UserRepository';
+import {
+  loadLatestBloodPressure,
+  loadLatestGlucose,
+  loadLatestWeight,
+} from '../database/repositories/HealthRepository';
 
 export default function HomeScreen() {
   const [activeProfile, setActiveProfile] = useState(null);
+  const [latestWeight, setLatestWeight] = useState(null);
+  const [latestGlucose, setLatestGlucose] = useState(null);
+  const [latestBloodPressure, setLatestBloodPressure] = useState(null);
 
   // Backup context state fallback (in case the database is still warming up)
   const { onboardingData } = useContext(AppContext);
@@ -23,9 +31,18 @@ export default function HomeScreen() {
 
     async function fetchProfile() {
       try {
-        const savedProfile = await loadUserProfile();
+        const [savedProfile, weight, glucose, pressure] = await Promise.all([
+          loadUserProfile(),
+          loadLatestWeight(),
+          loadLatestGlucose(),
+          loadLatestBloodPressure(),
+        ]);
+
         if (isMounted) {
           setActiveProfile(savedProfile);
+          setLatestWeight(weight);
+          setLatestGlucose(glucose);
+          setLatestBloodPressure(pressure);
         }
       } catch (error) {
         console.error('Failed to load profile from SQLite:', error);
@@ -92,12 +109,12 @@ export default function HomeScreen() {
       <View style={styles.statsRow}>
         <QuickStatCard
           label="Weight"
-          value={personalInfo.weight ? `${personalInfo.weight} kg` : '-- kg'}
+          value={latestWeight ? `${latestWeight.value} kg` : personalInfo.weight ? `${personalInfo.weight} kg` : '-- kg'}
         />
 
         <QuickStatCard
           label="Glucose"
-          value="128 mg/dL" // Will be linked to your future dynamic Glucose log table
+          value={latestGlucose ? `${latestGlucose.value} mg/dL` : '-- mg/dL'}
         />
       </View>
 
@@ -108,8 +125,8 @@ export default function HomeScreen() {
         />
 
         <QuickStatCard
-          label="Sleep"
-          value="--h --m"
+          label="BP"
+          value={latestBloodPressure ? `${latestBloodPressure.systolic}/${latestBloodPressure.diastolic}` : '--/--'}
         />
       </View>
     </ScreenContainer>

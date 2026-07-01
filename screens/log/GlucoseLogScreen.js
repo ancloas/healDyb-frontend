@@ -5,7 +5,10 @@ import {
   StyleSheet,
   View,
   Pressable,
+  Alert,
 } from 'react-native';
+
+import { saveGlucoseLog } from '../../database/repositories/HealthRepository';
 
 import ScreenContainer from '../../components/common/ScreenContainer';
 import Card from '../../components/common/Card';
@@ -104,12 +107,14 @@ export default function GlucoseLogScreen({ navigation }) {
 
       <PrimaryButton
         title="Save Reading"
-        onPress={() => {
-          console.log({
-            glucose,
-            measurementType: selectedType,
-          });
+        onPress={async () => {
+          if (!glucose) {
+            Alert.alert('Missing value', 'Please enter your glucose reading before saving.');
+            return;
+          }
 
+          await saveGlucoseLog(Number(glucose), selectedType);
+          Alert.alert('Saved', 'Your glucose reading has been recorded.');
           navigation.goBack();
         }}
       />

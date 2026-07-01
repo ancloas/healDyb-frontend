@@ -3,9 +3,6 @@ import { StyleSheet, Text } from 'react-native';
 
 import ScreenContainer from '../../components/common/ScreenContainer';
 import LogOptionCard from '../../components/log/LogOptionCard';
-import WeightLogScreen from './WeightLogScreen';
-import GlucoseLogScreen from './GlucoseLogScreen';
-import BloodPressureLogScreen from './BPLogScreen';
 
 export default function LogChooserScreen({ navigation }) {
   return (

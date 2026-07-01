@@ -4,7 +4,10 @@ import {
   TextInput,
   StyleSheet,
   View,
+  Alert,
 } from 'react-native';
+
+import { saveBloodPressureLog } from '../../database/repositories/HealthRepository';
 
 import ScreenContainer from '../../components/common/ScreenContainer';
 import Card from '../../components/common/Card';
@@ -92,13 +95,14 @@ export default function BloodPressureLogScreen({ navigation }) {
 
       <PrimaryButton
         title="Save Reading"
-        onPress={() => {
-          console.log({
-            systolic,
-            diastolic,
-            pulse,
-          });
+        onPress={async () => {
+          if (!systolic || !diastolic) {
+            Alert.alert('Missing values', 'Please enter both systolic and diastolic readings.');
+            return;
+          }
 
+          await saveBloodPressureLog(Number(systolic), Number(diastolic), Number(pulse || 0));
+          Alert.alert('Saved', 'Your blood pressure reading has been recorded.');
           navigation.goBack();
         }}
       />

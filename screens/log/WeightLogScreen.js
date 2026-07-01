@@ -4,7 +4,10 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Alert,
 } from 'react-native';
+
+import { saveWeightLog } from '../../database/repositories/HealthRepository';
 
 import ScreenContainer from '../../components/common/ScreenContainer';
 import Card from '../../components/common/Card';
@@ -62,8 +65,14 @@ export default function WeightLogScreen({ navigation }) {
 
       <PrimaryButton
         title="Save Weight"
-        onPress={() => {
-          console.log(weight);
+        onPress={async () => {
+          if (!weight) {
+            Alert.alert('Missing value', 'Please enter your weight before saving.');
+            return;
+          }
+
+          await saveWeightLog(Number(weight));
+          Alert.alert('Saved', 'Your weight entry has been recorded.');
           navigation.goBack();
         }}
       />
